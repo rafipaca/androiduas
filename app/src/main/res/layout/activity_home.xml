@@ -7,10 +7,85 @@
     android:background="@color/background"
     tools:context=".HomeActivity">
 
-    <FrameLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/appbar"
+        android:paddingTop="24dp"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp">
+
+                    <!-- Hapus atau sembunyikan elemen ImageView dan TextView yang tidak dibutuhkan -->
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_app" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="48dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="TPQ Explorer"
+                        android:textColor="#FFFFFF"
+                        android:textSize="32sp" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:id="@+id/searchBar"
+                        android:background="@drawable/button_shape"
+                        android:drawableStart="@drawable/ic_baseline_search_24"
+                        android:drawableTint="@color/primaryText"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="Cari daftar TPQ ?"
+                        android:padding="12dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="#aeaeae"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ListView
+        android:id="@+id/tpqlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/frameHomeContainer"></FrameLayout>
+        android:layout_below="@id/appBarLayout"/>
+
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -32,8 +107,8 @@
             android:theme="@style/AppTheme.BottomAppbar"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/transparent">
-
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:layout_width="match_parent"
@@ -47,7 +122,6 @@
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:id="@+id/fab"
@@ -59,8 +133,6 @@
             app:layout_anchor="@id/bottom_app"
             android:layout_height="wrap_content"/>
 
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 </RelativeLayout>

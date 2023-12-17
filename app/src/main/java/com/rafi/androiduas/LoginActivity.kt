@@ -32,16 +32,14 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-    private val dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "user_preferences"
-    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val application = application as MyApplication
         appContainer = DefaultAppContainer()
         userRepository = appContainer.userRepository // Inisialisasi userRepository
-        userPreferencesRepository = UserPreferencesRepository(dataStore)
+        userPreferencesRepository = application.userPreferencesRepository
 
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
@@ -74,6 +72,7 @@ class LoginActivity : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         // Pindah ke halaman beranda (HomeActivity) setelah login berhasil
+                        //ujicoba
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                         intent.putExtra("token", loginResponse.accessToken)
                         startActivity(intent)

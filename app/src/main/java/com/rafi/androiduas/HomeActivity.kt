@@ -3,6 +3,8 @@ package com.rafi.androiduas
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
@@ -10,10 +12,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rafi.androiduas.data.AppContainer
 import com.rafi.androiduas.data.DefaultAppContainer
+import com.rafi.androiduas.data.TpqRepository
 import com.rafi.androiduas.data.UserPreferencesRepository
 import com.rafi.androiduas.data.UserRepository
 import com.rafi.androiduas.data.UserState
@@ -25,56 +30,60 @@ import kotlinx.coroutines.launch
 private const val TAG = "HomeActivity"
 
 class HomeActivity : AppCompatActivity() {
+    private lateinit var recyclerView: RecyclerView
     private lateinit var userState: UserState
     private lateinit var token: String
     private var isUser: Boolean = true
     private var isAdmin: Boolean = false
     private lateinit var user: User
-    private lateinit var fragmentManager: FragmentManager
     private lateinit var fab: FloatingActionButton
     private lateinit var navigationView: BottomNavigationView
     private lateinit var userRepository: UserRepository
+    private lateinit var tpqRepository : TpqRepository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
     private val appContainer: AppContainer = DefaultAppContainer()
-    private val dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "user_preferences"
-    )
+    private lateinit var mListView: ListView
+    private lateinit var arrayAdapter: ArrayAdapter<String>
+    private lateinit var tpqNames: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        userPreferencesRepository = UserPreferencesRepository(dataStore)
+        val application = application as MyApplication
+        userPreferencesRepository = application.userPreferencesRepository
         userRepository = appContainer.userRepository
+        tpqRepository = appContainer.tpqRepository
 
-        // Inisialisasi fragmentManager
-        fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
+        // use arrayadapter and define an array
+        val arrayAdapter: ArrayAdapter<String>
+        tpqNames = mutableListOf()  // Inisialisasi tpqNames di sini
 
-        val homeFragment = HomeFragment()  // Create an instance of HomeFragment
+        mListView = findViewById(R.id.tpqlist)
+        arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tpqNames)
+        mListView.adapter = arrayAdapter
 
-        fragmentTransaction.replace(
-            R.id.frameHomeContainer,
-            homeFragment,
-            HomeFragment::class.java.simpleName
-        )
-        fragmentTransaction.commit()
         init()
     }
 
 
      fun init() {
+
         // Mendapatkan informasi user
         lifecycleScope.launch {
             try {
                 userPreferencesRepository.user.collect { user ->
-                    val token = user.token
+                    token = user.token
                     val isUser = user.isUser
                     val isAdmin = user.isAdmin
+
+
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.stackTraceToString())
             }
         }
+
+         loadTpqList()
 
         // Inisialisasi Button
         fab = findViewById(R.id.fab)
@@ -93,53 +102,46 @@ class HomeActivity : AppCompatActivity() {
                 ).show()
             }
         }
+         navigationView.setOnNavigationItemSelectedListener { menuItem ->
+             when (menuItem.itemId) {
+                 R.id.item_home -> {
+                     // Handle click on Home item
+                     // Start HomeActivity
+                     val intent = Intent(this@HomeActivity, HomeActivity::class.java)
+                     startActivity(intent)
+                     return@setOnNavigationItemSelectedListener true
+                 }
+
+                 R.id.item_account -> {
+                     // Handle click on Account item
+                     // Start EditUserActivity
+                     val intent = Intent(this@HomeActivity, EditUserActivity::class.java)
+                     startActivity(intent)
+                     return@setOnNavigationItemSelectedListener true
+                 }
+
+                 else -> false
+             }
+         }
+    }
+    private fun loadTpqList() {
+        lifecycleScope.launch {
+            try {
+                userPreferencesRepository.user.collect { user ->
+                    token = user.token
+                    val tpqList = tpqRepository.getAllTpq(token)
+
+                    // Mengisi tpqNames dengan nama-nama TPQ
+                    tpqNames.clear()
+                    tpqNames.addAll(tpqList.map { it.name })
+                    arrayAdapter.notifyDataSetChanged()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading TPQ list", e)
+                Toast.makeText(this@HomeActivity, "Gagal mendapatkan daftar TPQ", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 
-        /*
-        EventHandler navigationView
-        navigationView.setOnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-        R.id.item_home -> {
-        val account = fragmentManager.findFragmentByTag(
-        AccountFragment::class.java.simpleName
-        )
-        if (account != null) {
-        fragmentManager.beginTransaction().hide(
-        fragmentManager.findFragmentByTag(
-        AccountFragment::class.java.simpleName
-        )!!
-        ).commit()
-        fragmentManager.beginTransaction().show(
-        fragmentManager.findFragmentByTag(
-        HomeFragment::class.java.simpleName
-        )!!
-        ).commit()
-        }
-        }
-        R.id.item_account -> {
-        val account = fragmentManager.findFragmentByTag(
-        AccountFragment::class.java.simpleName
-        )
-        fragmentManager.beginTransaction().hide(
-        fragmentManager.findFragmentByTag(
-        HomeFragment::class.java.simpleName
-        )!!
-        ).commit()
-        if (account != null) {
-        fragmentManager.beginTransaction().show(
-        fragmentManager.findFragmentByTag(
-        AccountFragment::class.java.simpleName
-        )!!
-        ).commit()
-        } else {
-        fragmentManager.beginTransaction().add(
-        R.id.fragmentContainer, AccountFragment(),
-        AccountFragment::class.java.simpleName
-        ).commit()
-        }
-        }
-        }
-        */
-//    }
 

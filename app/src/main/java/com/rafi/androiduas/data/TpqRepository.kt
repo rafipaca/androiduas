@@ -12,6 +12,6 @@ interface TpqRepository {
 
 class NetworkTpqRepository(private val tpqService : TpqService) : TpqRepository {
     override suspend fun createTpq(token: String, tpq: CreateTpqForm) = tpqService.createTpq("Bearer $token", tpq)
-    override suspend fun getAllTpq(token: String): List<Tpq> = tpqService.getAllTpq("Bearer $token")
+    override suspend fun getAllTpq(token: String) = tpqService.getAllTpq("Bearer $token")
     override suspend fun updateTpq(token: String, tpqId: Long, tpq: Tpq) = tpqService.updateTpq("Bearer $token", tpqId, tpq)
 }

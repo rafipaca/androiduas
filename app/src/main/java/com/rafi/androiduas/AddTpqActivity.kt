@@ -38,19 +38,17 @@ class AddTpqActivity : AppCompatActivity() {
     private lateinit var tpqRepository : TpqRepository
     private lateinit var userState: UserState
 
-    private val dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "user_preferences"
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_tpq)
 
         // Inisialisasi kontainer dan repository
+        val application = application as MyApplication
         appContainer = DefaultAppContainer()
         userRepository = appContainer.userRepository
         tpqRepository = appContainer.tpqRepository
-        userPreferencesRepository = UserPreferencesRepository(dataStore)
+        userPreferencesRepository = application.userPreferencesRepository
         // Panggil init() pada saat onCreate
         init()
     }
@@ -71,7 +69,7 @@ class AddTpqActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 userPreferencesRepository.user.collect { user ->
-                     token = user.token
+                    token = user.token
 //                     isUser = user.isUser
 //                     isAdmin = user.isAdmin
                 }
@@ -113,6 +111,7 @@ class AddTpqActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Toast.makeText(this@AddTpqActivity, "Gagal menambahkan TPQ. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
+                Log.e(TAG, "Server response: ${e.localizedMessage}")
             }
         }
 

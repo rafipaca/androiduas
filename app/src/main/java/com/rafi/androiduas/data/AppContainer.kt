@@ -12,13 +12,14 @@ import retrofit2.Retrofit
 interface AppContainer {
     val tpqRepository: TpqRepository
     val userRepository: UserRepository
-
 }
 
 class DefaultAppContainer() : AppContainer {
     private val baseUrl = "http://10.0.2.2:8080"
+    private val json = Json { ignoreUnknownKeys = true }  // Configure JSON parsing with ignoreUnknownKeys
+
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
         .client(OkHttpClient.Builder().addInterceptor(
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -40,5 +41,4 @@ class DefaultAppContainer() : AppContainer {
     override val tpqRepository: TpqRepository by lazy {
         NetworkTpqRepository(tpqService)
     }
-
 }
