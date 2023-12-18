@@ -46,6 +46,16 @@
                         android:textColor="#FFFFFF"
                         android:textSize="32sp" />
 
+                    <ImageView
+                        android:id="@+id/imgLogout"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_baseline_exit_to_app_24"
+                        android:tint="#FFFFFF"
+                        android:layout_marginEnd="16dp"/>
+
                 </RelativeLayout>
 
                 <LinearLayout
@@ -84,7 +94,11 @@
         android:id="@+id/tpqlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appBarLayout"/>
+        android:layout_below="@id/appBarLayout"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

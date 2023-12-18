@@ -1,5 +1,6 @@
 package com.rafi.androiduas
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -107,6 +108,11 @@ class AddTpqActivity : AppCompatActivity() {
                 // Gantilah "token" dengan cara mendapatkan token autentikasi yang sesuai dengan implementasi Anda
                 tpqRepository.createTpq(token, createTpqForm)
                 Toast.makeText(this@AddTpqActivity, "TPQ berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+
+                // Setelah menambahkan TPQ, panggil kembali loadTpqList() pada HomeActivity
+                val intent = Intent(this@AddTpqActivity, HomeActivity::class.java)
+                startActivity(intent)
+
                 finish() // Tutup activity setelah berhasil menambahkan TPQ
             } catch (e: Exception) {
                 Toast.makeText(this@AddTpqActivity, "Gagal menambahkan TPQ. Coba lagi nanti.", Toast.LENGTH_SHORT).show()

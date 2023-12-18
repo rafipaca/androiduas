@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,11 +34,12 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var userState: UserState
     private lateinit var token: String
-    private var isUser: Boolean = true
+    private var isUser: Boolean = false
     private var isAdmin: Boolean = false
     private lateinit var user: User
     private lateinit var fab: FloatingActionButton
     private lateinit var navigationView: BottomNavigationView
+    private lateinit var imgLogout: ImageView
     private lateinit var userRepository: UserRepository
     private lateinit var tpqRepository : TpqRepository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
@@ -55,8 +57,8 @@ class HomeActivity : AppCompatActivity() {
         tpqRepository = appContainer.tpqRepository
 
         // use arrayadapter and define an array
-        val arrayAdapter: ArrayAdapter<String>
         tpqNames = mutableListOf()  // Inisialisasi tpqNames di sini
+
 
         mListView = findViewById(R.id.tpqlist)
         arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tpqNames)
@@ -88,10 +90,30 @@ class HomeActivity : AppCompatActivity() {
         // Inisialisasi Button
         fab = findViewById(R.id.fab)
         navigationView = findViewById(R.id.bottom_nav)
+         imgLogout = findViewById(R.id.imgLogout)
+
+         //EventHandler imglogout
+         imgLogout.setOnClickListener {
+             lifecycleScope.launch {
+                 try {
+                     // Panggil fungsi logout dari repository
+                     userPreferencesRepository.logout()
+
+                     // Redirect ke halaman login atau lakukan aksi logout lainnya
+                     val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+                     startActivity(intent)
+                     finish() // Optional: Tutup activity saat logout
+                 } catch (e: Exception) {
+                     // Tangani kesalahan logout, misalnya tampilkan pesan kesalahan
+                     Log.e(TAG, "Error Logout", e)
+                     Toast.makeText(this@HomeActivity, "Gagal logout. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                 }
+             }
+         }
 
         // EventHandler fab
         fab.setOnClickListener {
-            if (isUser) {
+            if (isAdmin) {
                 val i = Intent(this@HomeActivity, AddTpqActivity::class.java)
                 startActivity(i)
             } else {
@@ -133,12 +155,14 @@ class HomeActivity : AppCompatActivity() {
 
                     // Mengisi tpqNames dengan nama-nama TPQ
                     tpqNames.clear()
-                    tpqNames.addAll(tpqList.map { it.name })
+                    tpqNames.addAll(tpqList.map { tpq ->
+                        "${tpq.name}\nAlamat: ${tpq.alamat}\nNo. Kontak: ${tpq.nokontak}"
+                    })
                     arrayAdapter.notifyDataSetChanged()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading TPQ list", e)
-                Toast.makeText(this@HomeActivity, "Gagal mendapatkan daftar TPQ", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this@HomeActivity, "Gagal mendapatkan daftar TPQ", Toast.LENGTH_SHORT).show()
             }
         }
     }

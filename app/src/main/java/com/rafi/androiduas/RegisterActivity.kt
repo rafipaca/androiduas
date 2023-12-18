@@ -84,7 +84,7 @@ class RegisterActivity : AppCompatActivity() {
                 // Call the registration function from the repository
                 userRepository.register(registerForm)
 
-                val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                 startActivity(intent)
                 finish() // Optional: finish the current activity if you don't want the user to come back to it using the back button
             } catch (e: Exception) {

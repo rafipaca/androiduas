@@ -73,6 +73,18 @@ class UserPreferencesRepository(
         }
     }
 
+    suspend fun clearUser() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
+    suspend fun logout() {
+        clearUser()
+        // Tambahkan langkah-langkah lain yang perlu dilakukan saat logout, misalnya clear cache, hentikan servis, dll.
+    }
+
+
 }
 
 data class UserState(

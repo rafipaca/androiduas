@@ -112,10 +112,10 @@ class EditUserActivity : AppCompatActivity() {
             try {
                 // Gantilah "token" dengan cara mendapatkan token autentikasi yang sesuai dengan implementasi Anda
                 userRepository.updateProfile(token, updatedUser)
-                Toast.makeText(this@EditUserActivity, "TPQ berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditUserActivity, "Berhasil Mengganti Profile!", Toast.LENGTH_SHORT).show()
                 finish() // Tutup activity setelah berhasil menambahkan TPQ
             } catch (e: Exception) {
-                Toast.makeText(this@EditUserActivity, "Gagal menambahkan TPQ. Coba lagi nanti.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditUserActivity, "Gagal Mengganti Profile!", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
             }
         }
